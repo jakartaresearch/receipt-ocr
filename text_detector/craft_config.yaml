@@ -3,9 +3,9 @@ model: 'text_detector/model/craft_mlt_25k.pth'
 #text confidence threshold
 text_threshold: 0.7
 #text low-bound score
-low_text: 0.4 
+low_text: 0.2 
 #link confidence threshold
-link_threshold: 0.4
+link_threshold: 0.2
 #Use cuda for inference
 cuda: False
 #image size for inference
