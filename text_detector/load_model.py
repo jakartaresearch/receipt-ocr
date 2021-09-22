@@ -21,12 +21,13 @@ def copyStateDict(state_dict):
 def load_craft(config_file):
     cfg = yaml_loader(config_file)
     net = CRAFT()
-    
+
     print('Loading weights from checkpoint (' + cfg['model'] + ')')
     if cfg['cuda']:
         net.load_state_dict(copyStateDict(torch.load(cfg['model'])))
     else:
-        net.load_state_dict(copyStateDict(torch.load(cfg['model'], map_location='cpu')))
+        net.load_state_dict(copyStateDict(
+            torch.load(cfg['model'], map_location='cpu')))
 
     if cfg['cuda']:
         net = net.cuda()

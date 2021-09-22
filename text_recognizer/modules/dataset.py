@@ -26,11 +26,14 @@ class Batch_Balanced_Dataset(object):
         dashed_line = '-' * 80
         print(dashed_line)
         log.write(dashed_line + '\n')
-        print(f'dataset_root: {opt.train_data}\nopt.select_data: {opt.select_data}\nopt.batch_ratio: {opt.batch_ratio}')
-        log.write(f'dataset_root: {opt.train_data}\nopt.select_data: {opt.select_data}\nopt.batch_ratio: {opt.batch_ratio}\n')
+        print(
+            f'dataset_root: {opt.train_data}\nopt.select_data: {opt.select_data}\nopt.batch_ratio: {opt.batch_ratio}')
+        log.write(
+            f'dataset_root: {opt.train_data}\nopt.select_data: {opt.select_data}\nopt.batch_ratio: {opt.batch_ratio}\n')
         assert len(opt.select_data) == len(opt.batch_ratio)
 
-        _AlignCollate = AlignCollate(imgH=opt.imgH, imgW=opt.imgW, keep_ratio_with_pad=opt.PAD)
+        _AlignCollate = AlignCollate(
+            imgH=opt.imgH, imgW=opt.imgW, keep_ratio_with_pad=opt.PAD)
         self.data_loader_list = []
         self.dataloader_iter_list = []
         batch_size_list = []
@@ -39,7 +42,8 @@ class Batch_Balanced_Dataset(object):
             _batch_size = max(round(opt.batch_size * float(batch_ratio_d)), 1)
             print(dashed_line)
             log.write(dashed_line + '\n')
-            _dataset, _dataset_log = hierarchical_dataset(root=opt.train_data, opt=opt, select_data=[selected_d])
+            _dataset, _dataset_log = hierarchical_dataset(
+                root=opt.train_data, opt=opt, select_data=[selected_d])
             total_number_dataset = len(_dataset)
             log.write(_dataset_log)
 
@@ -48,8 +52,10 @@ class Batch_Balanced_Dataset(object):
             ex) opt.total_data_usage_ratio = 1 indicates 100% usage, and 0.2 indicates 20% usage.
             See 4.2 section in our paper.
             """
-            number_dataset = int(total_number_dataset * float(opt.total_data_usage_ratio))
-            dataset_split = [number_dataset, total_number_dataset - number_dataset]
+            number_dataset = int(total_number_dataset *
+                                 float(opt.total_data_usage_ratio))
+            dataset_split = [number_dataset,
+                             total_number_dataset - number_dataset]
             indices = range(total_number_dataset)
             _dataset, _ = [Subset(_dataset, indices[offset - length:offset])
                            for offset, length in zip(_accumulate(dataset_split), dataset_split)]
@@ -132,7 +138,8 @@ class LmdbDataset(Dataset):
 
         self.root = root
         self.opt = opt
-        self.env = lmdb.open(root, max_readers=32, readonly=True, lock=False, readahead=False, meminit=False)
+        self.env = lmdb.open(root, max_readers=32, readonly=True,
+                             lock=False, readahead=False, meminit=False)
         if not self.env:
             print('cannot create lmdb from %s' % (root))
             sys.exit(0)
@@ -143,7 +150,8 @@ class LmdbDataset(Dataset):
 
             if self.opt.data_filtering_off:
                 # for fast check or benchmark evaluation with no filtering
-                self.filtered_index_list = [index + 1 for index in range(self.nSamples)]
+                self.filtered_index_list = [
+                    index + 1 for index in range(self.nSamples)]
             else:
                 """ Filtering part
                 If you want to evaluate IC15-2077 & CUTE datasets which have special character labels,
@@ -230,7 +238,7 @@ class RawDataset(Dataset):
         gray_img = Image.fromarray(self.image_list[index]).convert('L')
         return (gray_img, 'image')
 
-    
+
 class ResizeNormalize(object):
 
     def __init__(self, size, interpolation=Image.BICUBIC):
@@ -260,7 +268,8 @@ class NormalizePAD(object):
         Pad_img = torch.FloatTensor(*self.max_size).fill_(0)
         Pad_img[:, :, :w] = img  # right pad
         if self.max_size[2] != w:  # add border Pad
-            Pad_img[:, :, w:] = img[:, :, w - 1].unsqueeze(2).expand(c, h, self.max_size[2] - w)
+            Pad_img[:, :, w:] = img[:, :, w -
+                                    1].unsqueeze(2).expand(c, h, self.max_size[2] - w)
 
         return Pad_img
 
@@ -290,16 +299,19 @@ class AlignCollate(object):
                 else:
                     resized_w = math.ceil(self.imgH * ratio)
 
-                resized_image = image.resize((resized_w, self.imgH), Image.BICUBIC)
+                resized_image = image.resize(
+                    (resized_w, self.imgH), Image.BICUBIC)
                 resized_images.append(transform(resized_image))
                 # resized_image.save('./image_test/%d_test.jpg' % w)
 
-            image_tensors = torch.cat([t.unsqueeze(0) for t in resized_images], 0)
+            image_tensors = torch.cat([t.unsqueeze(0)
+                                       for t in resized_images], 0)
 
         else:
             transform = ResizeNormalize((self.imgW, self.imgH))
             image_tensors = [transform(image) for image in images]
-            image_tensors = torch.cat([t.unsqueeze(0) for t in image_tensors], 0)
+            image_tensors = torch.cat([t.unsqueeze(0)
+                                       for t in image_tensors], 0)
 
         return image_tensors, labels
 

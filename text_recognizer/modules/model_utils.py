@@ -14,7 +14,8 @@ class CTCLabelConverter(object):
             # NOTE: 0 is reserved for 'CTCblank' token required by CTCLoss
             self.dict[char] = i + 1
 
-        self.character = ['[CTCblank]'] + dict_character  # dummy '[CTCblank]' token for CTCLoss (index 0)
+        # dummy '[CTCblank]' token for CTCLoss (index 0)
+        self.character = ['[CTCblank]'] + dict_character
 
     def encode(self, text, batch_max_length=25):
         """convert text-label into text-index.
@@ -44,7 +45,8 @@ class CTCLabelConverter(object):
 
             char_list = []
             for i in range(l):
-                if t[i] != 0 and (not (i > 0 and t[i - 1] == t[i])):  # removing repeated characters and blank.
+                # removing repeated characters and blank.
+                if t[i] != 0 and (not (i > 0 and t[i - 1] == t[i])):
                     char_list.append(self.character[t[i]])
             text = ''.join(char_list)
 
@@ -64,7 +66,8 @@ class CTCLabelConverterForBaiduWarpctc(object):
             # NOTE: 0 is reserved for 'CTCblank' token required by CTCLoss
             self.dict[char] = i + 1
 
-        self.character = ['[CTCblank]'] + dict_character  # dummy '[CTCblank]' token for CTCLoss (index 0)
+        # dummy '[CTCblank]' token for CTCLoss (index 0)
+        self.character = ['[CTCblank]'] + dict_character
 
     def encode(self, text, batch_max_length=25):
         """convert text-label into text-index.
@@ -90,7 +93,8 @@ class CTCLabelConverterForBaiduWarpctc(object):
 
             char_list = []
             for i in range(l):
-                if t[i] != 0 and (not (i > 0 and t[i - 1] == t[i])):  # removing repeated characters and blank.
+                # removing repeated characters and blank.
+                if t[i] != 0 and (not (i > 0 and t[i - 1] == t[i])):
                     char_list.append(self.character[t[i]])
             text = ''.join(char_list)
 
@@ -134,7 +138,8 @@ class AttnLabelConverter(object):
             text = list(t)
             text.append('[s]')
             text = [self.dict[char] for char in text]
-            batch_text[i][1:1 + len(text)] = torch.LongTensor(text)  # batch_text[:, 0] = [GO] token
+            # batch_text[:, 0] = [GO] token
+            batch_text[i][1:1 + len(text)] = torch.LongTensor(text)
         return (batch_text.to(device), torch.IntTensor(length).to(device))
 
     def decode(self, text_index, length):

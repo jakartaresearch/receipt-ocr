@@ -1,4 +1,4 @@
-"""  
+"""
 Copyright (c) 2019-present NAVER Corp.
 MIT License
 """
@@ -24,7 +24,8 @@ from .modules.utils import yaml_loader
 
 def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, canvas_size, mag_ratio, refine_net=None):
     # resize
-    img_resized, target_ratio, size_heatmap = imgproc.resize_aspect_ratio(image, canvas_size, interpolation=cv2.INTER_LINEAR, mag_ratio=mag_ratio)
+    img_resized, target_ratio, size_heatmap = imgproc.resize_aspect_ratio(
+        image, canvas_size, interpolation=cv2.INTER_LINEAR, mag_ratio=mag_ratio)
     ratio_h = ratio_w = 1 / target_ratio
 
     # preprocessing
@@ -39,23 +40,25 @@ def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, c
         y, feature = net(x)
 
     # make score and link map
-    score_text = y[0,:,:,0].cpu().data.numpy()
-    score_link = y[0,:,:,1].cpu().data.numpy()
+    score_text = y[0, :, :, 0].cpu().data.numpy()
+    score_link = y[0, :, :, 1].cpu().data.numpy()
 
     # refine link
     if refine_net is not None:
         with torch.no_grad():
             y_refiner = refine_net(y, feature)
-        score_link = y_refiner[0,:,:,0].cpu().data.numpy()
+        score_link = y_refiner[0, :, :, 0].cpu().data.numpy()
 
     # Post-processing
-    boxes, polys = craft_utils.getDetBoxes(score_text, score_link, text_threshold, link_threshold, low_text, poly)
+    boxes, polys = craft_utils.getDetBoxes(
+        score_text, score_link, text_threshold, link_threshold, low_text, poly)
 
     # coordinate adjustment
     boxes = craft_utils.adjustResultCoordinates(boxes, ratio_w, ratio_h)
     polys = craft_utils.adjustResultCoordinates(polys, ratio_w, ratio_h)
     for k in range(len(polys)):
-        if polys[k] is None: polys[k] = boxes[k]
+        if polys[k] is None:
+            polys[k] = boxes[k]
 
     # render results (optional)
     render_img = score_text.copy()
@@ -66,8 +69,8 @@ def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, c
 
 def inference(cfg, net, image_path):
     image = imgproc.loadImage(image_path)
-    bboxes, polys, score_text = test_net(net, image, cfg['text_threshold'], 
-                                         cfg['link_threshold'], cfg['low_text'], 
-                                         cfg['cuda'], cfg['poly'], cfg['canvas_size'], 
+    bboxes, polys, score_text = test_net(net, image, cfg['text_threshold'],
+                                         cfg['link_threshold'], cfg['low_text'],
+                                         cfg['cuda'], cfg['poly'], cfg['canvas_size'],
                                          cfg['mag_ratio'])
     return polys
