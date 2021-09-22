@@ -3,7 +3,7 @@ import torch
 
 from .modules.model_utils import CTCLabelConverter, AttnLabelConverter
 from .modules.utils import yaml_loader, DictObj
-from .model import Model
+from .modules.model import Model
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -25,5 +25,6 @@ def load_star(config_file):
 
     net = Model(obj_cfg)
     net = torch.nn.DataParallel(net).to(device)
+    print('Loading weights from checkpoint (' + obj_cfg.model + ')')
     net.load_state_dict(torch.load(obj_cfg.model, map_location=device))
-    return obj_cfg, net
+    return obj_cfg, net, converter
