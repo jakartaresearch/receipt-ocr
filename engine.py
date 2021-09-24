@@ -1,7 +1,8 @@
+from abc import ABC, abstractmethod
 import time
 import math
 import cv2
-from model import ReceiptOCR_Model
+from model import ReceiptOCR_DefaultModel
 from text_detector.infer import inference as infer_detector
 from text_recognizer.infer import data_preparation, inference as infer_recognizer
 
@@ -20,12 +21,26 @@ def timeit(method):
     return timed
 
 
-class ReceiptOCR_Engine():
-    def __init__(self, receipt_ocr_model: ReceiptOCR_Model):
-        if not isinstance(receipt_ocr_model, ReceiptOCR_Model):
+class ReceiptOCR_BaseEngine(ABC):
+    def __init__(self, receipt_ocr_model: ReceiptOCR_DefaultModel):
+        if not isinstance(receipt_ocr_model, ReceiptOCR_DefaultModel):
             raise TypeError
         self._model: ReceiptOCR_Model = receipt_ocr_model
 
+    @abstractmethod
+    def inference_detector(self):
+        pass
+
+    @abstractmethod
+    def inference_recognizer(self):
+        pass
+
+    @abstractmethod
+    def predict(self):
+        pass
+
+
+class ReceiptOCR_DefaultEngine(ReceiptOCR_BaseEngine):
     @timeit
     def inference_detector(self):
         output = infer_detector(self._model.cfg_detector,
@@ -101,3 +116,11 @@ class ReceiptOCR_Engine():
             tmp = [x[0] for x in entity]
             output.append(' '.join(tmp))
         return output
+
+
+class ReceiptOCR_ONNXEngine(ReceiptOCR_DefaultEngine):
+    @timeit
+    def inference_detector(self):
+        output = infer_detector(self._model.cfg_detector, self._model.detector,
+                                self._img_pth, onnx=True)
+        self._out_detector = output
