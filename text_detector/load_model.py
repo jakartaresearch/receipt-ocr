@@ -2,7 +2,7 @@ import torch
 import torch.backends.cudnn as cudnn
 
 from collections import OrderedDict
-from .modules.utils import yaml_loader
+from .modules.utils import yaml_loader, create_model_for_provider
 from .modules.craft import CRAFT
 
 
@@ -35,4 +35,12 @@ def load_craft(config_file):
         cudnn.benchmark = False
 
     net.eval()
+    return cfg, net
+
+
+def load_craft_onnx(config_file):
+    cfg = yaml_loader(config_file)
+    device = "CUDAExecutionProvider" if torch.cuda.is_available() else "CPUExecutionProvider"
+    print('Loading weights from checkpoint (' + cfg['model_onnx'] + ')')
+    net = create_model_for_provider(cfg['model_onnx'], device)
     return cfg, net

@@ -22,7 +22,7 @@ from .modules import imgproc
 from .modules.utils import yaml_loader
 
 
-def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, canvas_size, mag_ratio, refine_net=None):
+def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, canvas_size, mag_ratio, refine_net=None, onnx=False):
     # resize
     img_resized, target_ratio, size_heatmap = imgproc.resize_aspect_ratio(
         image, canvas_size, interpolation=cv2.INTER_LINEAR, mag_ratio=mag_ratio)
@@ -35,19 +35,35 @@ def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, c
     if cuda:
         x = x.cuda()
 
-    # forward pass
-    with torch.no_grad():
-        y, feature = net(x)
-
-    # make score and link map
-    score_text = y[0, :, :, 0].cpu().data.numpy()
-    score_link = y[0, :, :, 1].cpu().data.numpy()
-
-    # refine link
-    if refine_net is not None:
+    if onnx:
+        # forward pass
+        input_onnx = {'input': x.numpy()}
         with torch.no_grad():
-            y_refiner = refine_net(y, feature)
-        score_link = y_refiner[0, :, :, 0].cpu().data.numpy()
+            y, feature = net.run(None, input_onnx)
+
+        # make score and link map
+        score_text = y[0, :, :, 0]
+        score_link = y[0, :, :, 1]
+
+        # refine link
+        if refine_net is not None:
+            with torch.no_grad():
+                y_refiner = refine_net(y, feature)
+            score_link = y_refiner[0, :, :, 0]
+    else:
+        # forward pass
+        with torch.no_grad():
+            y, feature = net(x)
+
+        # make score and link map
+        score_text = y[0, :, :, 0].cpu().data.numpy()
+        score_link = y[0, :, :, 1].cpu().data.numpy()
+
+        # refine link
+        if refine_net is not None:
+            with torch.no_grad():
+                y_refiner = refine_net(y, feature)
+            score_link = y_refiner[0, :, :, 0].cpu().data.numpy()
 
     # Post-processing
     boxes, polys = craft_utils.getDetBoxes(
@@ -67,10 +83,10 @@ def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, c
     return boxes, polys, ret_score_text
 
 
-def inference(cfg, net, image_path):
+def inference(cfg, net, image_path, onnx=False):
     image = imgproc.loadImage(image_path)
     bboxes, polys, score_text = test_net(net, image, cfg['text_threshold'],
                                          cfg['link_threshold'], cfg['low_text'],
                                          cfg['cuda'], cfg['poly'], cfg['canvas_size'],
-                                         cfg['mag_ratio'])
+                                         cfg['mag_ratio'], onnx=onnx)
     return polys
