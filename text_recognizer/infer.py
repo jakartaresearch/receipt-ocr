@@ -14,8 +14,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def data_preparation(opt, list_data):
-    AlignCollate_obj = AlignCollate(imgH=opt.imgH, imgW=opt.imgW,
-                                    keep_ratio_with_pad=opt.PAD)
+    AlignCollate_obj = AlignCollate(
+        imgH=opt.imgH, imgW=opt.imgW, keep_ratio_with_pad=opt.PAD)
     dataset = RawDataset(list_data=list_data, opt=opt)
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=opt.batch_size,
                                               shuffle=False, num_workers=int(opt.workers),
