@@ -1,6 +1,7 @@
 *.pth
 *.jpg
 *.jpeg
+*.onnx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
