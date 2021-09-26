@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 import time
 import math
 import cv2
-from model import ReceiptOCR_DefaultModel
-from text_detector.infer import inference as infer_detector
-from text_recognizer.infer import data_preparation, inference as infer_recognizer
+from .model import ReceiptOCR_DefaultModel
+from .text_detector.infer import inference as infer_detector
+from .text_recognizer.infer import data_preparation, inference as infer_recognizer
 
 
 def timeit(method):

@@ -1,6 +1,6 @@
 #pretrained model
-model: 'text_detector/model/craft_mlt_25k.pth'
-model_onnx: 'text_detector/model/craft.onnx'
+model: 'models/text_detector/craft_mlt_25k.pth'
+model_onnx: 'models/text_detector/craft.onnx'
 #text confidence threshold
 text_threshold: 0.7
 #text low-bound score

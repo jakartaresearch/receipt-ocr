@@ -1,5 +1,5 @@
 # pretrained model
-model: 'text_recognizer/model/TPS-ResNet-BiLSTM-Attn-case-sensitive.pth'
+model: 'models/text_recognizer/TPS-ResNet-BiLSTM-Attn-case-sensitive.pth'
 # input batch size
 batch_size: 192
 # maximum label length

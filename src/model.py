@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import torch
-from text_detector.load_model import load_craft, load_craft_onnx
-from text_recognizer.load_model import load_star
+from .text_detector.load_model import load_craft, load_craft_onnx
+from .text_recognizer.load_model import load_star
 
 
 class ReceiptOCR_BaseModel(ABC):
