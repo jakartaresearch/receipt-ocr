@@ -44,7 +44,7 @@ class ReceiptOCR_DefaultEngine(ReceiptOCR_BaseEngine):
     @timeit
     def inference_detector(self):
         output = infer_detector(self._model.cfg_detector,
-                                self._model.detector, self._img_pth)
+                                self._model.detector, self._input)
         self._out_detector = output
 
     @timeit
@@ -59,9 +59,8 @@ class ReceiptOCR_DefaultEngine(ReceiptOCR_BaseEngine):
         self.result = self.combine_entity()
 
     @timeit
-    def predict(self, image_path):
-        self._img_pth = image_path
-        self._img = cv2.imread(image_path)
+    def predict(self, image):
+        self._input = image
 
         self.inference_detector()
         self.get_img_from_bb()
@@ -70,7 +69,7 @@ class ReceiptOCR_DefaultEngine(ReceiptOCR_BaseEngine):
     def get_img_from_bb(self):
         imgs, coords = [], []
         for bb in self._out_detector:
-            cropped_img, coord = self.crop_img(self._img, bb)
+            cropped_img, coord = self.crop_img(self._input, bb)
             imgs.append(cropped_img)
             coords.append(coord)
         self._imgs = imgs
@@ -122,5 +121,5 @@ class ReceiptOCR_ONNXEngine(ReceiptOCR_DefaultEngine):
     @timeit
     def inference_detector(self):
         output = infer_detector(self._model.cfg_detector, self._model.detector,
-                                self._img_pth, onnx=True)
+                                self._input, onnx=True)
         self._out_detector = output

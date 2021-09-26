@@ -5,6 +5,6 @@ from .craft import CRAFT
 
 
 __all__ = ['getDetBoxes_core', 'getPoly_core', 'getDetBoxes',
-           'adjustResultCoordinates', 'loadImage', 'normalizeMeanVariance',
+           'adjustResultCoordinates', 'normalizeMeanVariance',
            'denormalizeMeanVariance', 'resize_aspect_ratio', 'cvt2HeatmapImg',
            'yaml_loader', 'CRAFT']

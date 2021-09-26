@@ -83,8 +83,7 @@ def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, c
     return boxes, polys, ret_score_text
 
 
-def inference(cfg, net, image_path, onnx=False):
-    image = imgproc.loadImage(image_path)
+def inference(cfg, net, image, onnx=False):
     bboxes, polys, score_text = test_net(net, image, cfg['text_threshold'],
                                          cfg['link_threshold'], cfg['low_text'],
                                          cfg['cuda'], cfg['poly'], cfg['canvas_size'],
