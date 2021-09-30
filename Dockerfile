@@ -3,7 +3,8 @@ WORKDIR /receipt-ocr
 COPY configs /receipt-ocr/configs
 COPY models /receipt-ocr/models
 COPY src /receipt-ocr/src
-COPY main.py requirements.txt /receipt-ocr
+COPY main.py /receipt-ocr
+COPY requirements.txt /receipt-ocr
 
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6 -y
