@@ -28,7 +28,7 @@ def read_root():
     return {'message': 'API is running...'}
 
 
-@app.post("/predict/")
+@app.post("/ocr/predict/")
 def predict(item: Item):
     item = item.dict()
     img_bytes = base64.b64decode(item['image'].encode('utf-8'))
