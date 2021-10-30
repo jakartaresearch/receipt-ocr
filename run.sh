@@ -1,1 +1,0 @@
-docker run -d --name receipt-ocr-service -p 80:80 receipt-ocr
