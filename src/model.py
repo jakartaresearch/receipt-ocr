@@ -1,24 +1,23 @@
+"""Model Class."""
 from abc import ABC, abstractmethod
-import torch
 from .text_detector.load_model import load_craft, load_craft_onnx
 from .text_recognizer.load_model import load_star
 
 
-class ReceiptOCR_BaseModel(ABC):
+class BaseModel(ABC):
     """Abstract base class for Receipt OCR models."""
 
-    def __init__(self, detector_cfg, recognizer_cfg):
-        self._cfg_detector, self._detector = self._load_detector(detector_cfg)
+    def __init__(self, detector_cfg, detector_model, recognizer_cfg, recognizer_model):
+        """Init model config.
+
+        Args:
+            detector_cfg: config file for text detector
+            recognizer_cfg: config file for text recognizer
+        """
+        self._cfg_detector, self._detector = self._load_detector(detector_cfg, detector_model)
         self._cfg_recognizer, self._recognizer, self._converter = self._load_recognizer(
-            recognizer_cfg)
-
-    @abstractmethod
-    def _load_detector(self, detector_cfg):
-        """Return CRAFT model."""
-
-    @abstractmethod
-    def _load_recognizer(self, recognizer_cfg):
-        """Return STAR model."""
+            recognizer_cfg, recognizer_model
+        )
 
     @property
     def cfg_detector(self):
@@ -40,17 +39,27 @@ class ReceiptOCR_BaseModel(ABC):
     def converter(self):
         return self._converter
 
+    @abstractmethod
+    def _load_detector(self):
+        """Return CRAFT model."""
 
-class ReceiptOCR_DefaultModel(ReceiptOCR_BaseModel):
+    @abstractmethod
+    def _load_recognizer(self):
+        """Return STAR model."""
+
+
+class DefaultModel(BaseModel):
     """Default implementation of Receipt OCR models."""
 
-    def _load_detector(self, detector_cfg):
-        return load_craft(detector_cfg)
+    def _load_detector(self, detector_cfg, detector_model):
+        return load_craft(detector_cfg, detector_model)
 
-    def _load_recognizer(self, recognizer_cfg):
-        return load_star(recognizer_cfg)
+    def _load_recognizer(self, recognizer_cfg, recognizer_model):
+        return load_star(recognizer_cfg, recognizer_model)
 
 
-class ReceiptOCR_ONNXModel(ReceiptOCR_DefaultModel):
-    def _load_detector(self, detector_cfg):
-        return load_craft_onnx(detector_cfg)
+class ONNXModel(DefaultModel):
+    """ONNX Model."""
+
+    def _load_detector(self, detector_cfg, detector_model):
+        return load_craft_onnx(detector_cfg, detector_model)
