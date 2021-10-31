@@ -5,7 +5,7 @@ Input Image             |  Output
 :----------------------:|:----------------------:
 <img src="./data/tes.jpg" width="300" title="sample-input">  |  <img src="./data/sample_output.jpg" width="300" title="sample-output">
 
-## References:
+## References
 
 | Title                                                                                   | Author           | Year | Github | Paper |
 | ----------------------------------------------------------------------------------------| ---------------- | ---- | --------- | ----- | 
@@ -58,6 +58,7 @@ Input Image             |  Output
 |  ├─ engine.py                                   
 |  └─ model.py                                    
 ├─ .gitignore
+├─ CONTRIBUTING.md
 ├─ Dockerfile
 ├─ environment.yaml
 ├─ LICENSE
@@ -68,7 +69,7 @@ Input Image             |  Output
 ├─ setup.cfg
 ```
 
-## Requirements:
+## Requirements
 You can setup the environment using conda or pip
 ```
 pip install -r requirements.txt
@@ -80,8 +81,14 @@ conda env create -f environment.yaml
 
 ## Container
 ```
-docker build -t receipt-ocr . 
+docker build -t receipt-ocr .
+docker run -d --name receipt-ocr-service -p 80:80 receipt-ocr
+docker start receipt-ocr-service
+docker stop receipt-ocr-service
 ```
+
+## How to contribute?
+Check the docs [here](CONTRIBUTING.md)
 
 ## Creator
 [![](https://github.com/andreaschandra/git-assets/blob/master/pictures/ruben.png)](https://github.com/rubentea16)
