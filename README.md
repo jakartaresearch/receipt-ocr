@@ -7,10 +7,10 @@ Input Image             |  Output
 
 ## References
 
-| Title                                                                                   | Author           | Year | Github | Paper |
-| ----------------------------------------------------------------------------------------| ---------------- | ---- | --------- | ----- | 
-| Character Region Awareness for Text Detection                                           | Clova AI Research, NAVER Corp.| 2019 | https://github.com/clovaai/CRAFT-pytorch | https://arxiv.org/abs/1904.01941 |
-| What Is Wrong With Scene Text Recognition Model Comparisons? Dataset and Model Analysis | Clova AI Research, NAVER Corp.| 2019 | https://github.com/clovaai/deep-text-recognition-benchmark | https://arxiv.org/abs/1904.01906 |
+| Title                                                                                   | Author           | Year | Github | Paper | Download Model|
+| ----------------------------------------------------------------------------------------| ---------------- | ---- | --------- | ----- |  -------- | 
+| Character Region Awareness for Text Detection                                           | Clova AI Research, NAVER Corp.| 2019 | https://github.com/clovaai/CRAFT-pytorch | https://arxiv.org/abs/1904.01941 | [craft_mlt_25k.pth](https://drive.google.com/file/d/1Jk4eGD7crsqCCg9C9VjCLkMN3ze8kutZ/view)|
+| What Is Wrong With Scene Text Recognition Model Comparisons? Dataset and Model Analysis | Clova AI Research, NAVER Corp.| 2019 | https://github.com/clovaai/deep-text-recognition-benchmark | https://arxiv.org/abs/1904.01906 | [TPS-ResNet-BiLSTM-Attn-case-sensitive.pth](https://www.dropbox.com/sh/j3xmli4di1zuv3s/AAArdcPgz7UFxIHUuKNOeKv_a?dl=0) |
 
 ## Folder structure
 ```
@@ -68,6 +68,13 @@ Input Image             |  Output
 ├─ requirements.txt
 ├─ setup.cfg
 ```
+
+## Model Preparation
+You need to create "models" folder to store this:
+- detector_model = "models/text_detector/craft_mlt_25k.pth"
+- recognizer_model = "models/text_recognizer/TPS-ResNet-BiLSTM-Attn-case-sensitive.pth"
+
+Download all of pretrained models from "References" section
 
 ## Requirements
 You can setup the environment using conda or pip
